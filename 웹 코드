@@ -153,7 +153,7 @@
     // 초기 상태 설정
     let playerPosition = 0;
     let playerHealth = 20;
-    let enemyHealth = 20; // 매 전투마다 초기화
+    let enemyHealth = 20; 
     let isPlayerTurn = true;
     let isDiceActive = true;
     let itemCount = 0;
@@ -225,13 +225,13 @@
       updateStats();
       document.getElementById("event-message").innerText = "";
       document.getElementById("dice-result").innerText = ".";
-      shuffleTiles(); // 타일 섞기
+      shuffleTiles(); 
     }
     // 타일 랜덤 섞기
     function shuffleTiles() {
       let tiles = Array.from(document.getElementsByClassName("tile"));
       tiles = tiles.slice(0, 25); // 첫 25개 타일만 섞음
-      tiles.sort(() => Math.random() - 0.5); // 타일 섞기
+      tiles.sort(() => Math.random() - 0.5); 
       tiles.forEach((tile, index) => {
         tile.innerText = index + 1;
         tile.classList.remove("player", "monster", "event");
@@ -316,12 +316,12 @@
       if (enemyHealth <= 0) {
         logAction("플레이어가 승리했습니다!");
         battleArea.style.display = "none";
-        isDiceActive = true; // 전투 후 주사위 활성화
+        isDiceActive = true; 
         handlePostBattle();
       } else if (playerHealth <= 0) {
         logAction("몬스터가 승리했습니다...");
         battleArea.style.display = "none";
-        isDiceActive = false; // 전투 후 주사위 활성화
+        isDiceActive = false; 
         resetGame();
       }
     }
@@ -333,7 +333,7 @@
         alert("아이템을 얻었습니다!");
         document.getElementById("use-item-btn").style.display = "block";
       } else {
-        playerHealth += 5; // 체력 회복
+        playerHealth += 5; 
         alert(`체력이 5만큼 회복되었습니다. 현재 체력: ${playerHealth}`);
       }
     }
@@ -351,4 +351,3 @@
   </script>
 </body>
 </html>
-
