@@ -3,351 +3,185 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>모험형 주사위 게임과 카드 전투 시스템</title>
+  <title>모험형 주사위 게임</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .game-board {
-      display: grid;
-      grid-template-columns: repeat(5, 100px);
-      grid-template-rows: repeat(5, 100px);
-      gap: 5px;
-      margin-bottom: 20px;
-    }
-
-    .tile {
-      width: 100px;
-      height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #c8e6c9;
-      border: 2px solid #8bc34a;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #333;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .player {
-      background-color: white;
-      color: black;
-      width: 50px;
-      height: 50px;
-      position: absolute;
-    }
-
-    .monster {
-      background-color: #e53935;
-      color: white;
-    }
-
-    .event {
-      background-color: #ffeb3b;
-      color: white;
-    }
-
-    #dice {
-      padding: 10px 20px;
-      font-size: 1.2em;
-      font-weight: bold;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    #dice-result, #event-message, #battle-log, #item-count {
-      margin-top: 10px;
-      font-size: 1em;
-    }
-
-    .battle-area {
-      text-align: center;
-      margin-top: 20px;
-      display: none;
-    }
-
-    .card {
-      display: inline-block;
-      width: 120px;
-      padding: 10px;
-      margin: 5px;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background-color: #f5f5f5;
-      text-align: center;
-      font-size: 1em;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #use-item-btn {
-      margin-top: 10px;
-      padding: 10px;
-      font-size: 1.2em;
-      font-weight: bold;
-      background-color: #FF9800;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .game-board { display: grid; grid-template-columns: repeat(5, 100px); gap: 5px; margin-bottom: 20px; }
+    .tile { width: 100px; height: 100px; display: flex; justify-content: center; align-items: center; background-color: #c8e6c9; border: 2px solid #8bc34a; border-radius: 10px; font-weight: bold; font-size: 1.2em; color: #333; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); }
+    .monster { background-color: #e53935; color: white; }
+    .event { background-color: #ffeb3b; color: white; }
+    .current { background-color: black; color: white; }
+    #dice, #use-item-btn { padding: 10px 20px; font-size: 1.2em; font-weight: bold; border: none; cursor: pointer; border-radius: 5px; }
+    #dice { background-color: #4CAF50; color: white; }
+    #use-item-btn { display: none; background-color: #FF9800; color: white; margin-top: 10px; }
+    #event-message, #battle-log { margin-top: 10px; font-size: 1em; }
+    .battle-area { display: none; text-align: center; margin-top: 20px; }
+    .card { display: inline-block; width: 100px; padding: 10px; margin: 5px; border: 1px solid #333; border-radius: 8px; background-color: #f5f5f5; text-align: center; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>모험형 주사위 게임과 카드 전투 시스템</h1>
-
-  <div class="game-board">
-    <div class="tile" id="tile-0">1</div>
-    <div class="tile monster" id="tile-1">2</div>
-    <div class="tile" id="tile-2">3</div>
-    <div class="tile monster" id="tile-3">4</div>
-    <div class="tile" id="tile-4">5</div>
-    <div class="tile" id="tile-5">6</div>
-    <div class="tile" id="tile-6">7</div>
-    <div class="tile" id="tile-7">8</div>
-    <div class="tile monster" id="tile-8">9</div>
-    <div class="tile" id="tile-9">10</div>
-    <div class="tile" id="tile-10">11</div>
-    <div class="tile monster" id="tile-11">12</div>
-    <div class="tile event" id="tile-12">13</div>
-    <div class="tile" id="tile-13">14</div>
-    <div class="tile" id="tile-14">15</div>
-    <div class="tile" id="tile-15">16</div>
-    <div class="tile monster" id="tile-16">17</div>
-    <div class="tile" id="tile-17">18</div>
-    <div class="tile" id="tile-18">19</div>
-    <div class="tile" id="tile-19">20</div>
-    <div class="tile" id="tile-20">21</div>
-    <div class="tile monster" id="tile-21">22</div>
-    <div class="tile event" id="tile-22">23</div>
-    <div class="tile" id="tile-23">24</div>
-    <div class="tile" id="tile-24">25</div>
-  </div>
-
+  <h1>모험형 주사위 게임</h1>
+  <div class="game-board" id="game-board"></div>
   <button id="dice">주사위 굴리기</button>
-  <div id="dice-result"></div>
   <div id="event-message"></div>
   <div id="item-count">아이템 보유 개수: <span id="item-count-value">0</span></div>
-
   <div class="battle-area" id="battle-area">
-    <div id="player-stats">플레이어 체력: <span id="player-health">20</span></div>
-    <div id="enemy-stats">몬스터 체력: <span id="enemy-health">20</span></div>
+    <div>플레이어 체력: <span id="player-health">20</span></div>
+    <div>몬스터 체력: <span id="monster-health">20</span></div>
     <h2>카드를 선택하세요:</h2>
     <div id="player-cards"></div>
-    <div class="log" id="battle-log">전투 로그</div>
+    <div id="battle-log">전투 로그</div>
   </div>
-
+  <button id="use-item-btn">아이템 사용</button>
   <script>
-    // 초기 상태 설정
-    let playerPosition = 0;
-    let playerHealth = 20;
-    let enemyHealth = 20; 
-    let isPlayerTurn = true;
-    let isDiceActive = true;
-    let itemCount = 0;
-
+    const boardSize = 25, monsterProbability = 0.3, eventProbability = 0.2;
+    let playerPos = 0, playerHealth = 20, monsterHealth = 15, itemCount = 0, isPlayerTurn = true, isDiceActive = true;
     const playerDeck = [
-      { name: "공격", damage: 5, type: "attack" },
-      { name: "방어", block: 3, type: "defense" },
-      { name: "파이어볼", damage: 7, type: "attack" },
-      { name: "힐", heal: 4, type: "heal" }
+      { name: "공격", minDamage: 3, maxDamage: 7, type: "attack" },
+      { name: "기습", minDamage: 1, maxDamage: 12, type: "surprise" },
+      { name: "파이어볼", minDamage: 4, maxDamage: 8, type: "attack" },
+      { name: "힐", minHeal: 3, maxHeal: 10, type: "heal" }
     ];
     const enemyDeck = [
-      { name: "Claw Strike", damage: 4, type: "attack" },
-      { name: "Shield", block: 2, type: "defense" },
-      { name: "Bite", damage: 6, type: "attack" },
-      { name: "Recover", heal: 3, type: "heal" }
+      { name: "공격", minDamage: 3, maxDamage: 7, type: "attack" },
+      { name: "기습", minDamage: 1, maxDamage: 10, type: "surprise" },
+      { name: "깨물다", minDamage: 4, maxDamage: 8, type: "attack" },
+      { name: "자연치유", minHeal: 3, maxHeal: 7, type: "heal" }
     ];
-
-    const playerCardsDiv = document.getElementById("player-cards");
-    const battleLog = document.getElementById("battle-log");
-    const battleArea = document.getElementById("battle-area");
-    const itemCountValue = document.getElementById("item-count-value");
-
-    // 주사위 굴리기 및 이동
-    document.getElementById("dice").addEventListener("click", () => {
-      if (isDiceActive) {
-        const steps = Math.floor(Math.random() * 6) + 1;
-        document.getElementById("dice-result").innerText = `주사위 결과: ${steps}`;
-        movePlayer(steps);
+    const board = document.getElementById("game-board"),
+          playerCardsDiv = document.getElementById("player-cards"),
+          battleLog = document.getElementById("battle-log"),
+          battleArea = document.getElementById("battle-area"),
+          itemCountValue = document.getElementById("item-count-value");
+    const getRandomInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const createBoard = () => {
+      board.innerHTML = '';
+      for (let i = 0; i < boardSize; i++) {
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.innerText = i + 1;
+        if (Math.random() < monsterProbability) tile.classList.add("monster");
+        else if (Math.random() < monsterProbability + eventProbability) tile.classList.add("event");
+        board.appendChild(tile);
       }
-    });
-
-    function movePlayer(steps) {
-      if (battleArea.style.display === "block" || document.getElementById(`tile-${playerPosition}`).classList.contains("event")) {
-        return; // 전투 중 또는 이벤트 타일에서는 이동할 수 없음
-      }
-
-      // 이전 타일에서 플레이어 제거
-      document.getElementById(`tile-${playerPosition}`).classList.remove('player');
-      playerPosition = (playerPosition + steps) % 25;
-      const newTile = document.getElementById(`tile-${playerPosition}`);
-      newTile.classList.add('player');
-
-      if (newTile.classList.contains('monster')) {
+      updatePlayerPosition(0);
+    };
+    const updatePlayerPosition = (newPos) => {
+      const tiles = document.querySelectorAll(".tile");
+      tiles[playerPos].classList.remove("current");
+      playerPos = newPos;
+      tiles[playerPos].classList.add("current");
+      checkTile(tiles[playerPos]);
+    };
+    document.getElementById("dice").onclick = () => {
+      if (!isDiceActive) return;
+      const steps = getRandomInRange(1, 6);
+      document.getElementById("event-message").innerText = `주사위 결과: ${steps}`;
+      const newPos = playerPos + steps;
+      if (newPos >= boardSize) { alert("게임 승리!"); resetGame(); }
+      else updatePlayerPosition(newPos);
+    };
+    const checkTile = (tile) => {
+      if (tile.classList.contains("monster")) {
         document.getElementById("event-message").innerText = "몬스터를 만났습니다! 전투 시작!";
         startBattle();
-      } else if (newTile.classList.contains('event')) {
-        document.getElementById("event-message").innerText = "이벤트 발생! 아이템 사용권을 얻었습니다!";
-        itemCount++;
-        itemCountValue.innerText = itemCount;
-      } else {
-        document.getElementById("event-message").innerText = "이동한 타일에 아무 일도 없습니다.";
-      }
-
-      // 25번째 타일에 도달했을 때
-      if (playerPosition === 25) {
-        const restart = confirm("타일에 도달했습니다. 다시 시작하시겠습니까?");
-        if (restart) {
-          resetGame();
-        }
-      }
-    }
-    // 게임 초기화
-    function resetGame() {
-      playerPosition = 0;
-      playerHealth = 20;
-      enemyHealth = 20; // 몬스터 체력 초기화
-      itemCount = 0;
-      itemCountValue.innerText = itemCount;
-      updateStats();
-      document.getElementById("event-message").innerText = "";
-      document.getElementById("dice-result").innerText = ".";
-      shuffleTiles(); 
-    }
-    // 타일 랜덤 섞기
-    function shuffleTiles() {
-      let tiles = Array.from(document.getElementsByClassName("tile"));
-      tiles = tiles.slice(0, 25); // 첫 25개 타일만 섞음
-      tiles.sort(() => Math.random() - 0.5); 
-      tiles.forEach((tile, index) => {
-        tile.innerText = index + 1;
-        tile.classList.remove("player", "monster", "event");
-        if (Math.random() < 0.3) tile.classList.add("monster"); // 30% 확률로 몬스터 타일
-        if (Math.random() < 0.2) tile.classList.add("event"); // 20% 확률로 이벤트 타일
-      });
-    }
-    // 전투 시작
-    function startBattle() {
+      } else if (tile.classList.contains("event")) {
+        document.getElementById("event-message").innerText = "이벤트 발생!";
+        if (Math.random() < 0.5) {
+          itemCount++; itemCountValue.innerText = itemCount;
+          alert("아이템을 얻었습니다!");
+          document.getElementById("use-item-btn").style.display = "block";
+        } else alert("이벤트에 참여했지만, 아이템을 얻지 못했습니다.");
+      } else document.getElementById("event-message").innerText = "이동한 타일에 아무 일도 없습니다.";
+    };
+    const startBattle = () => {
+      monsterHealth = 15;
       battleArea.style.display = "block";
+      isDiceActive = false;
+      isPlayerTurn = true;
       updateStats();
       renderPlayerCards();
-    }
-    // UI 표시
-    function renderPlayerCards() {
+    };
+    const renderPlayerCards = () => {
       playerCardsDiv.innerHTML = "";
-      playerDeck.forEach((card, index) => {
+      playerDeck.forEach((card) => {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("card");
         cardDiv.innerText = `${card.name}\n(${card.type})`;
-        cardDiv.onclick = () => playCard(card, index);
+        cardDiv.onclick = () => playCard(card);
         playerCardsDiv.appendChild(cardDiv);
       });
-    }
-
-    // 카드 사용
-    function playCard(card, index) {
+    };
+    const playCard = (card) => {
       if (!isPlayerTurn) return;
       processCardEffect(card, "player");
       isPlayerTurn = false;
       setTimeout(enemyTurn, 1000);
-    }
-
-    // 몬스터의 턴
-    function enemyTurn() {
-      if (enemyHealth <= 0 || playerHealth <= 0) return;
+    };
+    const enemyTurn = () => {
+      if (monsterHealth <= 0 || playerHealth <= 0) return;
       const card = enemyDeck[Math.floor(Math.random() * enemyDeck.length)];
       processCardEffect(card, "enemy");
       isPlayerTurn = true;
       renderPlayerCards();
-    }
-
-    // 카드 효과 처리
-    function processCardEffect(card, user) {
+    };
+    const processCardEffect = (card, user) => {
+      const effectValue = card.type === "attack" || card.type === "surprise" ?
+        getRandomInRange(card.minDamage, card.maxDamage) : getRandomInRange(card.minHeal, card.maxHeal);
       if (user === "player") {
-        if (card.type === "attack") {
-          enemyHealth -= card.damage;
-          logAction(`플레이어가 ${card.name}으로 ${card.damage}의 피해를 입혔습니다.`);
-        } else if (card.type === "defense") {
-          playerHealth += card.block;
-          logAction(`플레이어가 ${card.name}으로 ${card.block}의 방어를 추가했습니다.`);
-        } else if (card.type === "heal") {
-          playerHealth += card.heal;
-          logAction(`플레이어가 ${card.name}으로 ${card.heal}의 체력을 회복했습니다.`);
-        }
+        if (card.type === "heal") playerHealth += effectValue;
+        else monsterHealth -= effectValue;
+        logAction(`플레이어가 ${card.name}으로 ${card.type === "heal" ? `체력을 ${effectValue} 회복했습니다.` : `${effectValue}의 피해를 입혔습니다.`}`);
       } else {
-        if (card.type === "attack") {
-          playerHealth -= card.damage;
-          logAction(`몬스터가 ${card.name}으로 ${card.damage}의 피해를 입혔습니다.`);
-        } else if (card.type === "defense") {
-          enemyHealth += card.block;
-          logAction(`몬스터가 ${card.name}으로 ${card.block}의 방어를 추가했습니다.`);
-        } else if (card.type === "heal") {
-          enemyHealth += card.heal;
-          logAction(`몬스터가 ${card.name}으로 ${card.heal}의 체력을 회복했습니다.`);
-        }
+        if (card.type === "heal") monsterHealth += effectValue;
+        else playerHealth -= effectValue;
+        logAction(`몬스터가 ${card.name}으로 ${card.type === "heal" ? `체력을 ${effectValue} 회복했습니다.` : `${effectValue}의 피해를 입혔습니다.`}`);
       }
       updateStats();
       checkBattleOutcome();
-    }
-    // 체력 업데이트 및 로그
-    function updateStats() {
+    };
+    const updateStats = () => {
       document.getElementById("player-health").innerText = playerHealth;
-      document.getElementById("enemy-health").innerText = enemyHealth;
-    }
-
-    function logAction(message) {
-      battleLog.innerText = message;
-    }
-
-    function checkBattleOutcome() {
-      if (enemyHealth <= 0) {
-        logAction("플레이어가 승리했습니다!");
-        battleArea.style.display = "none";
-        isDiceActive = true; 
-        handlePostBattle();
-      } else if (playerHealth <= 0) {
-        logAction("몬스터가 승리했습니다...");
-        battleArea.style.display = "none";
-        isDiceActive = false; 
-        resetGame();
-      }
-    }
-    // 전투 후 아이템 얻기 또는 체력 회복 처리
-    function handlePostBattle() {
-      if (Math.random() < 0.5) { // 50% 확률로 아이템 얻기
+      document.getElementById("monster-health").innerText = monsterHealth;
+    };
+    const logAction = (message) => { battleLog.innerText = message; };
+    const checkBattleOutcome = () => {
+      if (monsterHealth <= 0) { logAction("플레이어가 승리했습니다!"); endBattle(); }
+      else if (playerHealth <= 0) { logAction("몬스터가 승리했습니다..."); resetGame(); }
+    };
+    const endBattle = () => {
+      battleArea.style.display = "none";
+      isDiceActive = true;
+      isPlayerTurn = true;
+      handlePostBattle();
+    };
+    const handlePostBattle = () => {
+      if (Math.random() < 0.5) {
         itemCount++;
         itemCountValue.innerText = itemCount;
         alert("아이템을 얻었습니다!");
         document.getElementById("use-item-btn").style.display = "block";
       } else {
-        playerHealth += 5; 
+        playerHealth += 5;
         alert(`체력이 5만큼 회복되었습니다. 현재 체력: ${playerHealth}`);
       }
-    }
-    // 아이템 사용
+    };
+    const resetGame = () => {
+      playerPos = 0; playerHealth = 20; itemCount = 0;
+      itemCountValue.innerText = itemCount;
+      isDiceActive = true;
+      document.getElementById("event-message").innerText = "";
+      createBoard();
+    };
     document.getElementById("use-item-btn").addEventListener("click", () => {
       if (itemCount > 0) {
-        itemCount--;
-        itemCountValue.innerText = itemCount;
-        playerHealth += 20;
+        itemCount--; itemCountValue.innerText = itemCount;
+        playerHealth += 10;
         alert(`아이템을 사용하여 체력이 20만큼 회복되었습니다. 현재 체력: ${playerHealth}`);
-      } else {
-        alert("아이템이 없습니다!");
-      }
+        updateStats();
+      } else alert("아이템이 없습니다!");
     });
+    createBoard();
   </script>
 </body>
 </html>
