@@ -21,6 +21,17 @@
 </head>
 <body>
   <h1>모험형 주사위 게임</h1>
+  <button class="rules-btn" id="rules-btn">게임 규칙 보기</button>
+  <div class="rules" id="rules">
+    <h3>게임 규칙</h3>
+    <ul>
+      <li>주사위를 굴려 나온 숫자만큼 이동합니다.</li>
+      <li>몬스터 타일에 도착하면 전투가 시작됩니다.</li>
+      <li>이벤트 타일에서는 50% 확률로 아이템을 획득할 수 있습니다.</li>
+      <li>아이템은 체력을 회복하는 데 사용할 수 있습니다.</li>
+      <li>25번째 타일에 도착하면 게임에서 승리합니다.</li>
+    </ul>
+  </div>
   <div class="game-board" id="game-board"></div>
   <button id="dice">주사위 굴리기</button>
   <div id="event-message"></div>
@@ -48,6 +59,21 @@
       { name: "깨물다", minDamage: 4, maxDamage: 8, type: "attack" },
       { name: "자연치유", minHeal: 3, maxHeal: 7, type: "heal" }
     ];
+    document.addEventListener("DOMContentLoaded", () => {
+      const rulesBtn = document.getElementById("rules-btn");
+      const rules = document.getElementById("rules");
+
+      // 게임 규칙 보기/닫기 버튼 동작
+      rulesBtn.addEventListener("click", () => {
+        if (rules.style.display === "block") {
+          rules.style.display = "none";
+          rulesBtn.textContent = "게임 규칙 보기";
+        } else {
+          rules.style.display = "block";
+          rulesBtn.textContent = "게임 규칙 닫기";
+        }
+      });
+    });
     const board = document.getElementById("game-board"),
           playerCardsDiv = document.getElementById("player-cards"),
           battleLog = document.getElementById("battle-log"),
@@ -185,5 +211,3 @@
   </script>
 </body>
 </html>
-
-//로그인 화면 만들어야함...
